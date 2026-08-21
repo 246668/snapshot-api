@@ -43,9 +43,9 @@ export function parseAllowedOrigins(raw: string | undefined): Set<string> | unde
   if (values.some((value) => !value)) return undefined;
 
   const origins = values.map(parseConfiguredOrigin);
-  if (origins.some((origin) => !origin)) return undefined;
+  if (origins.some((origin) => origin === undefined)) return undefined;
 
-  return new Set(origins);
+  return new Set(origins as string[]);
 }
 
 function parseConfiguredOrigin(value: string): string | undefined {
