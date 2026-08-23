@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "types": ["node", "vitest/globals"]
   },
-  "include": ["netlify/functions/**/*.ts", "tests/**/*.ts", "vitest.config.ts"]
+  "include": ["netlify/functions/**/*.ts", "types/**/*.d.ts", "tests/**/*.ts", "vitest.config.ts"]
 }
