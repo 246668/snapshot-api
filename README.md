@@ -1,6 +1,6 @@
 # Netlify webpage screenshot API
 
-This Netlify Function renders a requested public website as a fixed **800 × 600** PNG. The current route is versioned so browser-source checks are always evaluated before rendering:
+This Netlify Function renders a requested public website as a fixed **800 × 600** PNG:
 
 ```text
 GET /api/https://google.com
@@ -52,6 +52,5 @@ Successful images use `Cache-Control: private, no-store`; shared CDN caching is 
 - Confirm the Netlify plan has enough memory and timeout for headless Chromium.
 - Verify serverless Chromium resolution on a Deploy Preview.
 - Test a real `<img>` on an allowlisted page and inspect its outgoing Referer in DevTools.
-- Purge existing cache entries for the retired `/api/*` route and do not retain that route as an alias.
-- Test successful PNG dimensions and negative caller/SSRF cases before enabling the navigation site.
+- Set `SCREENSHOT_E2E_BASE_URL` and `SCREENSHOT_E2E_ALLOWED_ORIGIN` to run the deployed E2E tests. The allowed origin must also be included in Netlify's `SCREENSHOT_ALLOWED_ORIGINS`.
 - Configure upstream or Netlify/WAF rate limits and review third-party screenshot-content requirements.

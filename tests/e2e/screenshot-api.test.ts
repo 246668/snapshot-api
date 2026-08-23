@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
 const baseUrl = process.env.SCREENSHOT_E2E_BASE_URL;
-const token = process.env.SCREENSHOT_API_TOKEN;
-const e2e = baseUrl && token ? describe : describe.skip;
+const allowedOrigin = process.env.SCREENSHOT_E2E_ALLOWED_ORIGIN;
+const e2e = baseUrl && allowedOrigin ? describe : describe.skip;
+
+const sourceHeaders = allowedOrigin ? { origin: allowedOrigin } : undefined;
 
 e2e('screenshot API', () => {
   it('returns an 800x600 PNG for a public target', async () => {
     const response = await fetch(`${baseUrl}/api/https://example.com`, {
-      headers: { 'x-screenshot-api-token': token! },
+      headers: sourceHeaders,
     });
 
     expect(response.status).toBe(200);
@@ -21,7 +23,7 @@ e2e('screenshot API', () => {
 
   it('rejects a private target', async () => {
     const response = await fetch(`${baseUrl}/api/http://127.0.0.1`, {
-      headers: { 'x-screenshot-api-token': token! },
+      headers: sourceHeaders,
     });
 
     expect(response.status).toBe(403);
