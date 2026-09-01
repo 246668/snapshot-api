@@ -5,7 +5,12 @@ export type RequestPolicyResult =
 export function evaluateBrowserSource(
   request: Request,
   configuredOrigins = process.env.SCREENSHOT_ALLOWED_ORIGINS,
+  disableOriginCheck = process.env.SCREENSHOT_DISABLE_ORIGIN_CHECK,
 ): RequestPolicyResult {
+  if (isOriginCheckDisabled(disableOriginCheck)) {
+    return { allowed: true };
+  }
+
   const allowedOrigins = parseAllowedOrigins(configuredOrigins);
   if (!allowedOrigins) {
     return { allowed: false, reason: 'misconfigured' };
@@ -34,6 +39,10 @@ export function evaluateBrowserSource(
   }
 
   return { allowed: true };
+}
+
+export function isOriginCheckDisabled(value = process.env.SCREENSHOT_DISABLE_ORIGIN_CHECK): boolean {
+  return value?.trim().toLowerCase() === 'true';
 }
 
 export function parseAllowedOrigins(raw: string | undefined): Set<string> | undefined {

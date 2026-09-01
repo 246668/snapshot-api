@@ -14,11 +14,13 @@ For target URLs containing query strings, fragments, or reserved characters, per
 
 ## Browser access policy
 
-The service is intended for images embedded by approved sites. Configure `SCREENSHOT_ALLOWED_ORIGINS` as a comma-separated list of exact origins:
+The service is intended for images embedded by approved sites. By default, configure `SCREENSHOT_ALLOWED_ORIGINS` as a comma-separated list of exact origins:
 
 ```dotenv
 SCREENSHOT_ALLOWED_ORIGINS=https://www.mydomain.com,https://mydomain.com
 ```
+
+For local debugging only, set `SCREENSHOT_DISABLE_ORIGIN_CHECK=true` to skip this browser-source check. Never enable it in a public deployment: anyone could then use the endpoint to render permitted public targets.
 
 An ordinary browser image request is accepted when its `Origin` or `Referer` belongs to that allowlist. When both are present, both must be allowed. There is no custom request header, so an approved page can render an image directly:
 
@@ -41,14 +43,14 @@ Successful images use `Cache-Control: private, no-store`; shared CDN caching is 
 ## Local development
 
 1. Copy `.env.example` to `.env`.
-2. Set `SCREENSHOT_ALLOWED_ORIGINS` to the origin of the page that will embed snapshots, such as `http://localhost:4321`.
+2. Either set `SCREENSHOT_ALLOWED_ORIGINS` to the origin of the page that will embed snapshots, such as `http://localhost:4321`, or set `SCREENSHOT_DISABLE_ORIGIN_CHECK=true` for local debugging.
 3. Set `PUPPETEER_EXECUTABLE_PATH` to a locally installed Chrome or Chromium executable.
 4. Install the Netlify CLI if needed, then run `npm run dev`.
 5. Request `http://localhost:8888/api/https://example.com` with an allowed `Referer`, for example `http://localhost:4321/page`.
 
 ## Deployment checklist
 
-- Configure `SCREENSHOT_ALLOWED_ORIGINS` in the Netlify environment before deploying; it is fail-closed when absent or invalid.
+- Configure `SCREENSHOT_ALLOWED_ORIGINS` in the Netlify environment before deploying; it is fail-closed when absent or invalid. Do not set `SCREENSHOT_DISABLE_ORIGIN_CHECK=true` in a public deployment.
 - Confirm the Netlify plan has enough memory and timeout for headless Chromium.
 - Verify serverless Chromium resolution on a Deploy Preview.
 - Test a real `<img>` on an allowlisted page and inspect its outgoing Referer in DevTools.
