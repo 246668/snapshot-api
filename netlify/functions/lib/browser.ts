@@ -3,9 +3,9 @@ import chromium from '@sparticuz/chromium';
 import puppeteer, { type Browser } from 'puppeteer-core';
 
 export const VIEWPORT = {
-  width: 800,
-  height: 600,
-  deviceScaleFactor: 1,
+  width: 1600,
+  height: 1200,
+  deviceScaleFactor: 0.5,
   isMobile: false,
   hasTouch: false,
   isLandscape: true,

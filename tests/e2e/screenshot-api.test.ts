@@ -7,7 +7,7 @@ const e2e = baseUrl && allowedOrigin ? describe : describe.skip;
 const sourceHeaders = allowedOrigin ? { origin: allowedOrigin } : undefined;
 
 e2e('screenshot API', () => {
-  it('returns an 800x600 PNG for a public target', async () => {
+  it('returns an 800x600 PNG from a 1600x1200 desktop viewport for a public target', async () => {
     const response = await fetch(`${baseUrl}/api/https://example.com`, {
       headers: sourceHeaders,
     });

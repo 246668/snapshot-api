@@ -1,6 +1,6 @@
 # Netlify webpage screenshot API
 
-This Netlify Function renders a requested public website as a fixed **800 × 600** PNG:
+This Netlify Function renders a requested public website using a desktop-sized **1600 × 1200 CSS-pixel** viewport and produces a fixed **800 × 600** PNG:
 
 ```text
 GET /api/https://google.com
