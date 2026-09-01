@@ -59,7 +59,7 @@ export default async function handler(request: Request, _context: Context): Prom
     let interceptedRequestCount = 0;
     let blockedMainFrame = false;
 
-    page.on('request', (interceptedRequest: HTTPRequest) => {
+    page.on('request', (interceptedRequest) => {
       void handleRequest(interceptedRequest, page!, () => {
         interceptedRequestCount += 1;
         return interceptedRequestCount;
@@ -107,12 +107,21 @@ export default async function handler(request: Request, _context: Context): Prom
   }
 }
 
+export function shouldBlockResource(resourceType: string): boolean {
+  return resourceType === 'media';
+}
+
 async function handleRequest(
   request: HTTPRequest,
   page: Page,
   incrementRequestCount: () => number,
   markBlockedMainFrame: () => void,
 ): Promise<void> {
+  if (shouldBlockResource(request.resourceType())) {
+    await request.abort('blockedbyclient');
+    return;
+  }
+
   if (incrementRequestCount() > maxRequests) {
     if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
       markBlockedMainFrame();
