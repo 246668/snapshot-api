@@ -9,6 +9,7 @@ import { parseTargetUrl, TargetUrlError } from './lib/target-url.js';
 const navigationTimeout = boundedEnvironmentNumber('SCREENSHOT_NAVIGATION_TIMEOUT_MS', 15_000, 1_000, 25_000);
 const settleDelay = boundedEnvironmentNumber('SCREENSHOT_SETTLE_DELAY_MS', 750, 0, 3_000);
 const maxRequests = boundedEnvironmentNumber('SCREENSHOT_MAX_REQUESTS', 150, 10, 300);
+const DESKTOP_CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36';
 
 export const config: Config = {
   path: '/api/*',
@@ -51,6 +52,7 @@ export default async function handler(request: Request, _context: Context): Prom
     browser = await launchBrowser();
     page = await browser.newPage();
     await page.setViewport(VIEWPORT);
+    await page.setUserAgent(DESKTOP_CHROME_USER_AGENT);
     await page.setJavaScriptEnabled(true);
     await page.setRequestInterception(true);
 

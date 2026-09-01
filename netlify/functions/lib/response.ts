@@ -1,3 +1,5 @@
+const SCREENSHOT_CACHE_SECONDS = 14 * 24 * 60 * 60;
+
 export type ApiErrorCode =
   | 'access_policy_misconfigured'
   | 'request_not_allowed'
@@ -38,9 +40,10 @@ export function pngResponse(image: Uint8Array): Response {
   return new Response(body, {
     status: 200,
     headers: {
-      'Cache-Control': 'private, no-store',
+      'Cache-Control': `public, max-age=0, s-maxage=${SCREENSHOT_CACHE_SECONDS}`,
       'Content-Length': String(image.byteLength),
       'Content-Type': 'image/png',
+      'Vary': 'Origin, Referer',
       'X-Content-Type-Options': 'nosniff',
     },
   });

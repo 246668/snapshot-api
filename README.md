@@ -38,7 +38,7 @@ Origin/Referer validation is a browser hotlink deterrent, not cryptographic auth
 
 The function separately validates the initial target and every browser request, including redirects and subresources. It rejects non-HTTP(S) schemes, credentials, unsupported ports, localhost, single-label names, private/link-local/loopback/reserved IPv4 and IPv6 addresses, and hostnames with any non-public DNS result. This remains required even when the requesting website is allowlisted.
 
-Successful images use `Cache-Control: private, no-store`; shared CDN caching is disabled so an edge cache cannot bypass the request-source check.
+Successful images use `Cache-Control: public, max-age=0, s-maxage=1209600`, so Netlify's CDN caches each successful screenshot for **14 days**. Browser requests still revalidate with the CDN, while a cache hit returns the stored PNG without invoking Chromium. Because this cache key is the request URL, do not enable CDN caching while `SCREENSHOT_DISABLE_ORIGIN_CHECK=true` is used in a public deployment.
 
 ## Local development
 
