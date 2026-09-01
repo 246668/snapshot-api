@@ -44,13 +44,14 @@ Successful images use `Cache-Control: private, no-store`; shared CDN caching is 
 
 1. Copy `.env.example` to `.env`.
 2. Either set `SCREENSHOT_ALLOWED_ORIGINS` to the origin of the page that will embed snapshots, such as `http://localhost:4321`, or set `SCREENSHOT_DISABLE_ORIGIN_CHECK=true` for local debugging.
-3. Set `PUPPETEER_EXECUTABLE_PATH` to a locally installed Chrome or Chromium executable.
+3. Set `PUPPETEER_EXECUTABLE_PATH` to a locally installed Chrome or Chromium executable. Do not configure this variable in Netlify: the function falls back to serverless Chromium when the configured local path is unavailable.
 4. Install the Netlify CLI if needed, then run `npm run dev`.
 5. Request `http://localhost:8888/api/https://example.com` with an allowed `Referer`, for example `http://localhost:4321/page`.
 
 ## Deployment checklist
 
 - Configure `SCREENSHOT_ALLOWED_ORIGINS` in the Netlify environment before deploying; it is fail-closed when absent or invalid. Do not set `SCREENSHOT_DISABLE_ORIGIN_CHECK=true` in a public deployment.
+- Do not configure `PUPPETEER_EXECUTABLE_PATH` in Netlify; it is for local development only. The function uses serverless Chromium in production.
 - Confirm the Netlify plan has enough memory and timeout for headless Chromium.
 - Verify serverless Chromium resolution on a Deploy Preview.
 - Test a real `<img>` on an allowlisted page and inspect its outgoing Referer in DevTools.

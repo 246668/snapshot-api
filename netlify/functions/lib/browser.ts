@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import chromium from '@sparticuz/chromium';
 import puppeteer, { type Browser } from 'puppeteer-core';
 
@@ -10,20 +11,26 @@ export const VIEWPORT = {
   isLandscape: true,
 } as const;
 
-export async function launchBrowser(): Promise<Browser> {
-  const localExecutable = process.env.PUPPETEER_EXECUTABLE_PATH;
-
-  if (localExecutable) {
-    return puppeteer.launch({
-      executablePath: localExecutable,
-      headless: true,
-      args: ['--disable-dev-shm-usage', '--no-sandbox'],
-    });
+export function resolveBrowserExecutable(
+  localExecutable = process.env.PUPPETEER_EXECUTABLE_PATH,
+  pathExists: (path: string) => boolean = existsSync,
+): { executablePath?: string; useLocalExecutable: boolean } {
+  if (localExecutable && pathExists(localExecutable)) {
+    return { executablePath: localExecutable, useLocalExecutable: true };
   }
 
+  return { useLocalExecutable: false };
+}
+
+export async function launchBrowser(): Promise<Browser> {
+  const { executablePath: localExecutable, useLocalExecutable } = resolveBrowserExecutable();
+  const executablePath = localExecutable ?? await chromium.executablePath();
+
   return puppeteer.launch({
-    executablePath: await chromium.executablePath(),
+    executablePath,
     headless: true,
-    args: chromium.args,
+    args: useLocalExecutable
+      ? ['--disable-dev-shm-usage', '--no-sandbox']
+      : chromium.args,
   });
 }

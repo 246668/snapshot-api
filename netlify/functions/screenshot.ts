@@ -86,6 +86,11 @@ export default async function handler(request: Request, _context: Context): Prom
     const image = await page.screenshot({ type: 'png', fullPage: false });
     return pngResponse(image);
   } catch (error) {
+    console.error('Screenshot rendering failed', {
+      error: describeError(error),
+      targetHost: target.hostname,
+    });
+
     if (error instanceof NetworkPolicyError) {
       return jsonError(403, 'target_not_allowed', 'The requested target is not allowed.');
     }
@@ -133,6 +138,14 @@ async function handleRequest(
 function boundedEnvironmentNumber(name: string, fallback: number, min: number, max: number): number {
   const value = Number.parseInt(process.env[name] ?? '', 10);
   return Number.isFinite(value) && value >= min && value <= max ? value : fallback;
+}
+
+function describeError(error: unknown): { name: string; message: string; stack?: string } | { value: string } {
+  if (error instanceof Error) {
+    return { name: error.name, message: error.message, stack: error.stack };
+  }
+
+  return { value: String(error) };
 }
 
 function isTimeout(error: unknown): boolean {
