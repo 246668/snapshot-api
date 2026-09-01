@@ -51,7 +51,6 @@ export default async function handler(request: Request, _context: Context): Prom
     browser = await launchBrowser();
     page = await browser.newPage();
     await page.setViewport(VIEWPORT);
-    await page.setUserAgent('AurielQ Screenshot Bot/1.0');
     await page.setJavaScriptEnabled(true);
     await page.setRequestInterception(true);
 
